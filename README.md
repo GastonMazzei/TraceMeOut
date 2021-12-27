@@ -13,7 +13,7 @@ Can a Neural Net learn to differentiate between user tasks by watching at the Ke
 
 `./process.sh`
 
-3️⃣ To train the neural net and check the results, run (<i>Under construction!</i>)
+3️⃣ To train the neural net and check the results, run (🚧<i>Under construction!</i>🚧)
 
 `./trainAI.sh`
 
