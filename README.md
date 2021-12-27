@@ -1,6 +1,6 @@
 # TraceMeOut
 
-Can a Neural Net learn to differentiate between user tasks by watching at the Kernel Trace? Does this accuracy defines a metric of how reverse-engineerable a system is? 🤩 
+<b>Can a Neural Net learn to differentiate between user tasks by watching at the Kernel Trace? Does this accuracy defines a metric of how reverse-engineerable a system is?</b> 🤩 
 
 
 <b>How to run</b>
