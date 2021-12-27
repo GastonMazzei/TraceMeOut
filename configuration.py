@@ -29,4 +29,4 @@ EPOCHS=3
 
 # Extras
 POOLING = False
-PROCS=[3, 2, 0, 1]
+PROCS=[]

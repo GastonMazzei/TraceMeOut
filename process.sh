@@ -1,8 +1,8 @@
 
 # Clean and Prepare
 mkdir processed_trace
-rm processed_trace/*
-rm *.pkl
+rm processed_trace/*txt
+rm helpers/*.pkl
 
 # Process Data: build list of times, yaml, and mapping between names and values
 python3 pythonscripts/Processor1.py

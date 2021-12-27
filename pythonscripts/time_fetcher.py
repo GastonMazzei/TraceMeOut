@@ -29,7 +29,8 @@ signal.signal(signal.SIGINT, signal_handler)
 
 # Core
 while True:
-	answer = input("Hello, please input a number between 0 and N-1 to record the beggining of one of N possible activities :-)\nYour answer: ")
+	answer = input("Hello, please input a number between 0 and N-1 to record the beggining of one of N possible activities :-).\n(To exit type  'exit'!)\nYour answer: ")
+	if answer=='exit': break
 	uptime = float(subprocess.check_output("cat /proc/uptime", shell=True).decode('utf8').split(' ')[0])*1e6
 	ctime = float(time.time())*1e6
 	category += [(int(answer),uptime,ctime)]

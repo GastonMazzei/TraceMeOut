@@ -1,8 +1,8 @@
 
-# Activate sys/kernel collection
+# Backup configuration and activate sys/kernel collection
 sudo cp /sys/kernel/debug/tracing/trace_options utils/trace_options.backup
-sudo mv utils/our_trace_options /sys/kernel/debug/tracing/trace_options
-sudo echo "function_graph" > /sys/kernel/debug/tracing/current_tracer
+sudo su -c utils/configure_kerneltracer.sh
+sudo su -c utils/activate_kerneltracer.sh
 
 # Spawn a shell with python
 python3 pythonscripts/time_fetcher.py
@@ -10,6 +10,9 @@ python3 pythonscripts/time_fetcher.py
 # Store the results
 sudo cp /sys/kernel/debug/tracing/trace raw_data/trace
 
-# Restore defaults
-sudo echo "nop" > /sys/kernel/debug/tracing/current_tracer
-sudo cp utils/trace_options.backup /sys/kernel/debug/tracing/trace_options
+# Deactivate tracer and restore defaults
+sudo  su -c utils/deactivate_kerneltracer.sh
+
+# Let the trace defaults restore themselves and destroy the backup :-)
+#sudo su -c utils/reconfigure_kerneltracer.sh
+rm utils/trace_options.backup
