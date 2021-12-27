@@ -1,4 +1,4 @@
-import yaml
+import yaml, sys
 
 
 
@@ -6,9 +6,13 @@ def tagger(nm):
     return 125
 
 def parse_wrapper(data, ixs,conns,tagf):
-    parse(data,ixs,conns,-1, tagf)
-    del conns[-1]
-
+	parse(data,ixs,conns,-1, tagf)
+	try:
+		del conns[-1]
+	except:
+		print(data)
+		print(conns)
+		sys.exit(1)
 def parse(data,ixs,conns,i, tagger):
     if type(data)==list:
         for x in data:

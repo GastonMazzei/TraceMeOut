@@ -20,8 +20,8 @@ for P in config.PROCS:
 	if  VERBOSE: plt.hist(lens);plt.show()
 	for i in range(len(data['X2'])):
 		lc = 0
-		ks = data['X2'][i].keys()
-		K = max(ks)
+		ks = list(data['X2'][i].keys())
+		K = max(ks)  if ks!=[] else 0
 		local = []
 		for k_ in range(K):
 			lc += len(data['X2'][i].get(k_,[]))

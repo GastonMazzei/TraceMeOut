@@ -21,19 +21,22 @@ def indexer_evolver(v,DT,L):
 	yield None
 
 def closer_nonnegative(v,y):
-	return np.argmin(np.argmax(np.where(y >= v, v-y, -np.inf)))
+	return np.argmax(np.where(y >= v, v-y, -np.inf))
 
 def build_data(d):
     total = d[-1][1]
     i = len(d)-1
-    while d[i][0]:
-        total = d[i-1][1] + total
-        i -= 1
     try:
+        while d[i][0]:
+            total = d[i-1][1] + total
+            i -= 1
+            if i<1: break
+        if total=='': raise Exception('empty!')
         return yaml.safe_load(total)
     except Exception as ins:
+        print('ERROR!')
         print(len(d))
-        print(i, d[i][0], d[i-1][0])
+        print(i, [dx[0] for dx in d])
         os.system(f'echo "{total}" > temp.log')
         print(ins.args)
         sys.exit(1)
@@ -65,11 +68,9 @@ if __name__ == '__main__':
 			data = f.readlines()
 		CHECKMARKS = []
 		for i,x in enumerate(data):
-			if x[0]!=' ':
+			if x[0]=='-':
 				CHECKMARKS.append(i)
 		CHECKMARKS = np.asarray(CHECKMARKS)
-		if VERBOSE: print(f'Checkmarks for P={N} are {CHECKMARKS}')
-
 
 		# Compute the portions that have to be considered
 		data_generator  = indexer_evolver(times, config.dt, len(times))
@@ -84,33 +85,35 @@ if __name__ == '__main__':
 				i_,IX,t0_,tf_ = answer
 			else:
 				break
-			if VERBOSE: time.sleep(4)
+			if VERBOSE: print(f't0,tf = {t0_} {tf_}')
+			if VERBOSE: time.sleep(2)
 			# Open the file selectively ;-)
 			PREV_FIRSTLINE = FIRSTLINE
 			FIRSTLINE = CHECKMARKS[closer_nonnegative(CHECKMARKS, IX)]
 			PREV_LASTLINE = LASTLINE
 			LASTLINE = IX
+			if FIRSTLINE==LASTLINE: LASTLINE += 1
 			localdata = []
-			if PREV_FIRSTLINE != FIRSTLINE or firstLap:
+			if PREV_FIRSTLINE != FIRSTLINE:
 				for i in range(FIRSTLINE, LASTLINE):
-					localdata += [linecache.getline(FILENAME, i)]
-				if firstLap: firstLap = False
+					localdata += [linecache.getline(FILENAME, i+1)]
 				data += [(False, ''.join(localdata))]
 			else:
 				for i in range(PREV_LASTLINE, LASTLINE):
-					localdata += [linecache.getline(FILENAME, i)]
+					localdata += [linecache.getline(FILENAME, i+1)]
 				data += [(True, ''.join(localdata))]
-			if VERBOSE: print(data[-1][1])
+			if VERBOSE: print([dx[0] for dx in data])
 			
 
                         # Build Y: we use the category closer to the end, i.e. tf_ 
 			Y.append(df_categories[closer_nonnegative(df_uptimes, tf_)])
-			if VERBOSE: print(f'Latest category is: {Y[-1]}')
+			if VERBOSE: print(f'Latest category is: {Y[-1]}, prev_firstline={PREV_FIRSTLINE}, firstline={FIRSTLINE}, last&prevlast={LASTLINE},{PREV_LASTLINE}')
 
 
 			# Build X1 and X2: we must build a graph using data[-1] to data[..-N] until the first item is True (included)
 			ixs, cons = [],{}
 			dic = build_data(data)
+			
 			parse_wrapper(dic,ixs,cons,tagger)
 			X1 += [ixs.copy()]
 			X2 += [cons.copy()]
