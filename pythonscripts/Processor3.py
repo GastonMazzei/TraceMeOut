@@ -59,7 +59,7 @@ if __name__ == '__main__':
 		# Open time
 		with open(FILENAME_TIME, 'r') as f:
 			times = json.load(f)
-		times = np.asarray(times)* 1e6
+		times = np.asarray(times) * 1e6
 		if VERBOSE: print(f'median wait between calls and std are: {round(np.mean(np.diff(times)),3)}us {round(np.std(np.diff(times)),2)}us')
 		
 
@@ -85,6 +85,10 @@ if __name__ == '__main__':
 				i_,IX,t0_,tf_ = answer
 			else:
 				break
+			if df_categories[closer_nonnegative(df_uptimes, tf_)]==-1:
+				# Skip this lap as it has no target to classify, i.e. it is data from the beggining
+				# when users werent yet able to mark which tag belonged to their then current activity
+				continue
 			if VERBOSE: print(f't0,tf = {t0_} {tf_}')
 			if VERBOSE: time.sleep(2)
 			# Open the file selectively ;-)
@@ -113,7 +117,6 @@ if __name__ == '__main__':
 			# Build X1 and X2: we must build a graph using data[-1] to data[..-N] until the first item is True (included)
 			ixs, cons = [],{}
 			dic = build_data(data)
-			
 			parse_wrapper(dic,ixs,cons,tagger)
 			X1 += [ixs.copy()]
 			X2 += [cons.copy()]

@@ -2,10 +2,10 @@
 # Model-specific parameters
 T=8 # duration of the window in dt units
 dt = 100 # time in microseconds
-UNIQUES=2116  #number of unique ids
-MI=6824  #max number of interactions
-ML=6826  #max number of leaves
-NCATEGORIES=4
+UNIQUES=1576  #number of unique ids
+MI=14864  #max number of interactions
+ML=14866  #max number of leaves
+NCATEGORIES=2
 
 # Architectural parameters
 ACT1 = 'relu'
@@ -29,4 +29,4 @@ EPOCHS=3
 
 # Extras
 POOLING = False
-PROCS=[]
+PROCS=[3, 2, 0, 1]
