@@ -30,6 +30,10 @@ The sampling and neural network model are as follows: in particular it requires 
 
 <img src="https://github.com/GastonMazzei/TraceMeOut/raw/main/utils/neuralnet_model.png" width=800>
 
+<b>Results</b> (🚧<i>Under construction!</i>🚧)
+
+For the simple case of the binary classification task of listening to music on YouTube Vs having the video paused (the database for the 4 CPU cores is currently part of this repo in `processed_trace`), the results of the neural net should be inserted here! 😃
+
 <b>Requirements</b>
 
 - A <b>linux kernel</b> equipped with Ftrace and function_graph <i>(e.g. Ubuntu 18 and 20)</i>
