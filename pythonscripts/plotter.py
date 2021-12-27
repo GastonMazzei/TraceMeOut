@@ -52,5 +52,6 @@ while True:
 	i += 1
 	G = nx.from_numpy_matrix(build_adj_matr(d['X2'][i]))  
 	nx.draw(G, with_labels=True) 
-	plt.show()
+	#plt.show()
 	plt.savefig(f'utils/example{c}.png'); c+=1
+	if c>5: break
