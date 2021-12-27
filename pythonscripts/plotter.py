@@ -47,9 +47,10 @@ def build_adj_matr(v):
 lens = [len(x) for x in d['X2']]
 print(lens)
 i = int(input("In which index should we start? Your answer: "))
+c = 1
 while True:
 	i += 1
 	G = nx.from_numpy_matrix(build_adj_matr(d['X2'][i]))  
 	nx.draw(G, with_labels=True) 
 	plt.show()
-	plt.savefig(f'utils/example{i}.png')
+	plt.savefig(f'utils/example{c}.png'); c+=1
