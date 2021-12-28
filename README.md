@@ -1,6 +1,6 @@
 # TraceMeOut
 
-Can a Neural Net learn to differentiate between user tasks by watching at the Kernel Trace? Does this accuracy defines a metric of how reverse-engineerable a system is? 🤩 
+<b>Can a Neural Net learn to differentiate between user tasks by watching at the Kernel Trace? Does this accuracy defines a metric of how reverse-engineerable a system is?</b> 🤩 
 
 
 <b>How to run</b>
@@ -13,7 +13,7 @@ Can a Neural Net learn to differentiate between user tasks by watching at the Ke
 
 `./process.sh`
 
-3️⃣ To train the neural net and check the results, run (<i>Under construction!</i>)
+3️⃣ To train the neural net and check the results, run (🚧<i>Under construction!</i>🚧)
 
 `./trainAI.sh`
 
@@ -29,6 +29,10 @@ The sampling and neural network model are as follows: in particular it requires 
 <img src="https://github.com/GastonMazzei/TraceMeOut/raw/main/utils/sampling_model.png" width=800>
 
 <img src="https://github.com/GastonMazzei/TraceMeOut/raw/main/utils/neuralnet_model.png" width=800>
+
+<b>Results</b> (🚧<i>Under construction!</i>🚧)
+
+For the simple case of the binary classification task of listening to music on YouTube Vs having the video paused (the database for the 4 CPU cores is currently part of this repo in `processed_trace`), the results of the neural net should be inserted here! 😃
 
 <b>Requirements</b>
 
