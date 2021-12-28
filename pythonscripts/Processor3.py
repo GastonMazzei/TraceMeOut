@@ -112,8 +112,6 @@ if __name__ == '__main__':
                         # Build Y: we use the category closer to the end, i.e. tf_ 
 			Y.append(df_categories[closer_nonnegative(df_uptimes, tf_)])
 			if VERBOSE: print(f'Latest category is: {Y[-1]}, prev_firstline={PREV_FIRSTLINE}, firstline={FIRSTLINE}, last&prevlast={LASTLINE},{PREV_LASTLINE}')
-
-
 			# Build X1 and X2: we must build a graph using data[-1] to data[..-N] until the first item is True (included)
 			ixs, cons = [],{}
 			dic = build_data(data)
@@ -122,8 +120,8 @@ if __name__ == '__main__':
 			X2 += [cons.copy()]
 
 			# Save!
-			with open(f'processed_trace/Dataset{N}.pkl','wb') as f:
-				pickle.dump({'X1':X1,'X2':X2,'Y':Y}, f)
+		with open(f'processed_trace/Dataset{N}.pkl','wb') as f:
+			pickle.dump({'X1':X1,'X2':X2,'Y':Y}, f)
 
 
 
