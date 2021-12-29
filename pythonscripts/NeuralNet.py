@@ -134,12 +134,12 @@ else:
         w = list(range(A,B))
         np.random.shuffle(w)
         for i in w:
-                yield ([
-                        [ tf.convert_to_tensor(np.asarray([ (X1[j] + [0.] * X1_TRACKER[j]) for j in range(i-T+1,i+1)]).reshape(T,-1,1)), 
-                          tf.convert_to_tensor(np.asarray([ (X2[j] + [[0., 0.]] * X2_TRACKER[j]) for j in range(i-T+1,i+1)])),
-                        ], 
+                yield (
+                        ( tf.convert_to_tensor(np.asarray([ (X1[j] + [0.] * X1_TRACKER[j]) for j in range(i-T+1,i+1)]).reshape(1,T,-1,1)), 
+                          tf.convert_to_tensor(np.asarray([ (X2[j] + [[0., 0.]] * X2_TRACKER[j]) for j in range(i-T+1,i+1)]).reshape(1,T,-1,2)),
+                        ), 
                         tf.convert_to_tensor(ONE_HOT_Y[i:i+1,:].reshape(1,2)),
-                      ])
+                      )
         yield None
 
     # A mini print section for debugging :-) flagged to kill 
@@ -149,17 +149,34 @@ else:
     print(x1.shape, x2.shape, y.shape)
     #	sys.exit(1)
 
+
+
     #OT = ( (tf.TensorSpec(shape=(1, 8, 5712), dtype=tf.float32) , tf.TensorSpec(shape=(8, 5709, 2), dtype=tf.float32)), tf.TensorSpec(shape=(1,2), dtype=tf.float32))
-    A = tuple([ tuple([  (tf.float32,)              for i in range(5712)  ]) for _ in range(8)])
-    B = tuple([ tuple([  (tf.float32,tf.float32)    for i in range(5709)  ]) for _ in range(8)])
-    C = tuple(           (tf.float32, tf.float32)                                              )
-    OT = tuple([ tuple([A,B]), C])
-    print(f'Finished building the output structure')
-    #OT = ( ( (tf.float32,tf.float32,tf.float32), (tf.float32,tf.float32,tf.float32)) ,  (tf.float32, tf.float32))
-    trainD = tf.data.Dataset.from_generator(lambda: produce_data(T,LTR), output_types=OT)
-    print(f'Finished building the training dataset')
-    valD = tf.data.Dataset.from_generator(lambda: produce_data(LTR+T,L), output_types=OT)
-    print(f'Finished building the validation dataset')
+    if False:
+        A = tuple([ tuple([  (tf.float32,)              for i in range(5712)  ]) for _ in range(8)])
+        B = tuple([ tuple([  (tf.float32,tf.float32)    for i in range(5709)  ]) for _ in range(8)])
+        C = tuple(           (tf.float32, tf.float32)                                              )
+        OT = tuple([ tuple([A,B]), C])
+        print(f'Finished building the output structure')
+        trainD = tf.data.Dataset.from_generator(lambda: produce_data(T,LTR), output_types=OT)
+        print(f'Finished building the training dataset')
+        valD = tf.data.Dataset.from_generator(lambda: produce_data(LTR+T,L), output_types=OT)
+        print(f'Finished building the validation dataset')
+    else:
+        OS = (
+                 (tf.TensorSpec(shape=(None,8,5712,1), dtype=tf.float32),
+                 tf.TensorSpec(shape=(None,8,5709,2), dtype=tf.float32)),
+                 tf.TensorSpec(shape=(None,2), dtype=tf.float32),
+            )
+        #OS = (
+        #        ( (8,5712,1),(8,5709,2) ), (1,2)
+        #     )
+        print(f'Finished building the output structure')
+        trainD = tf.data.Dataset.from_generator(lambda: produce_data(T,LTR), output_signature=OS)#output_types=(tf.float32), output_shapes=OS)
+        print(f'Finished building the training dataset')
+        valD = tf.data.Dataset.from_generator(lambda: produce_data(LTR+T,L), output_signature=OS)# output_types=(tf.float32), output_shapes=OS)
+        print(f'Finished building the validation dataset')
+    
     print(f'About to train! :-)')
     history = model.fit(trainD, epochs=1, batch_size=200, validation_data=valD, verbose=2)
 

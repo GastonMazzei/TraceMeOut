@@ -38,7 +38,7 @@ For the simple case of the binary classification task of listening to music on Y
 
 - A <b>linux kernel</b> equipped with Ftrace and function_graph <i>(e.g. Ubuntu 18 and 20)</i>
 
-- <b>Python3</b> equipped with <b>Tensorflow, NumPy</b> and <b>Pandas</b>. 
+- <b>Python3</b> equipped with <b>Tensorflow</b>(+2.5)<b>, NumPy</b> and <b>Pandas</b>. 
 
 - Last but not least, the hypothesis that the kernel trace contains 'some' information from which a neural net can learn 😉
 
