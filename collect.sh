@@ -1,21 +1,30 @@
 
-# Backup configuration and activate sys/kernel collection
-sudo cp /sys/kernel/debug/tracing/trace_options utils/trace_options.backup
-sudo su -c utils/configure_kerneltracer.sh
-sudo su -c utils/activate_kerneltracer.sh
+rm raw_data/trace
 
-# Pipe the kernel trace while collecting user's tags via a python script
+echo "function_graph" > /sys/kernel/debug/tracing/current_tracer
+echo "funcgraph-abstime" >> /sys/kernel/debug/tracing/trace_options
+
+
+# Collect data from user until explicit termination
 (
-sudo su -c utils/pipe_kerneltracer.sh &
-echo "LASTPID=$!" > utils/lastpid.temp ;
+cat /sys/kernel/debug/tracing/trace_pipe >> raw_data/trace &
+LASTPID=$! ;
 python3 pythonscripts/time_fetcher.py;
+kill $LASTPID
 )
 
 
-# Remove the pipe and stop the kernel tracer
-source utils/lastpid.temp
-kill $LASTPID
-sudo  su -c utils/deactivate_kerneltracer.sh
+# Stop Tracer
+echo "nop" > /sys/kernel/debug/tracing/current_tracer
 
 # End
 echo "End of the script! :-)"
+
+
+# Print alert on how to stop the tracer if there was a Ctrl+C kill instead of 'exit' gracefully
+echo "More Info:"
+echo "If Ctrl+C was sent to Python3, and the CPU remains super busy, it could be that the tracer got jammed ON and it is still being recorded. To fix you can reboot OR: 
+'sudo su'
+'ps'
+'kill (PID of the cat process)'
+'echo nop > /sys/kernel/debug/tracing/current_tracer'"
