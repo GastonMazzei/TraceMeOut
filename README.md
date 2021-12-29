@@ -32,7 +32,7 @@ The sampling and neural network model are as follows: in particular it requires 
 
 <b>Results</b> (🚧<i>Under construction!</i>🚧)
 
-For the simple case of the binary classification task of listening to music on YouTube Vs having the video paused (the database for the 4 CPU cores is currently part of this repo in `processed_trace`), the results of the neural net should be inserted here! 😃
+For the simple case of the binary classification task of listening to music on YouTube Vs having the video paused (the database for the 4 CPU cores is currently part of this repo in `processed_trace`. 20-30 secs. of trace data sampled at 100 microseconds led to the ~5Mb databases), the results of the neural net should be inserted here! 😃
 
 <b>Requirements</b>
 

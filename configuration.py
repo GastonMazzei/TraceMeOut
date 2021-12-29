@@ -1,10 +1,10 @@
 
 # Model-specific parameters
 T=8 # duration of the window in dt units
-dt = 100 # time in microseconds
-UNIQUES=1576  #number of unique ids
-MI=14864  #max number of interactions
-ML=14866  #max number of leaves
+dt = 100000 # time in microseconds
+UNIQUES=3807  #number of unique ids
+MI=5709  #max number of interactions
+ML=5712  #max number of leaves
 NCATEGORIES=2
 
 # Architectural parameters

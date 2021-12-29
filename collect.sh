@@ -14,7 +14,12 @@ kill $LASTPID
 )
 
 
-# Stop Tracer
+# Stop Tracer (at leas one should suceed ;-)
+echo "nop" > /sys/kernel/debug/tracing/current_tracer
+echo "nop" > /sys/kernel/debug/tracing/current_tracer
+echo "nop" > /sys/kernel/debug/tracing/current_tracer
+echo "nop" > /sys/kernel/debug/tracing/current_tracer
+echo "nop" > /sys/kernel/debug/tracing/current_tracer
 echo "nop" > /sys/kernel/debug/tracing/current_tracer
 
 # End

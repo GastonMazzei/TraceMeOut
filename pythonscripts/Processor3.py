@@ -15,6 +15,7 @@ def indexer_evolver(v,DT,L):
 			j+=1
 			if j>=L: break
 		tf = v[j-1]
+		if  j%20==0: print(f'Processed {j} of {L}')
 		yield i,j,t0,tf
 		t0 += DT
 		i = j-1
@@ -40,6 +41,22 @@ def build_data(d):
         os.system(f'echo "{total}" > temp.log')
         print(ins.args)
         sys.exit(1)
+
+def clean_data(a):
+	"""
+	Keeps the last relevant info of an array, from the first index False onwards
+	e.g. [(False,data1),(True,data2),(True,data3),(False,data4),(True,data5)]
+	is converted to
+	[(False,data4),(True,data5)]
+	"""
+	ix_last_false = len(a)-1
+	while ix_last_false>0:
+		if not a[ix_last_false][0]:
+			del(a[:ix_last_false])
+			break
+		else:
+			ix_last_false -= 1
+	return
 
 if __name__ == '__main__':
 	with open('helpers/unique_elems.pkl','rb') as f:
@@ -80,6 +97,7 @@ if __name__ == '__main__':
 		X1,X2,Y = [],[],[]
 		cter = 0
 		while answer != None:
+			if cter % 5 == 0: clean_data(data)
 			answer = data_generator.__next__()
 			if answer != None:	
 				i_,IX,t0_,tf_ = answer
@@ -118,6 +136,8 @@ if __name__ == '__main__':
 			parse_wrapper(dic,ixs,cons,tagger)
 			X1 += [ixs.copy()]
 			X2 += [cons.copy()]
+			cter += 1
+
 
 			# Save!
 		with open(f'processed_trace/Dataset{N}.pkl','wb') as f:
