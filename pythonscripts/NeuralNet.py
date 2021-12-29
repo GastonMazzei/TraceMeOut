@@ -96,34 +96,75 @@ if TEST:
     LVAL = int(VAL * L)
     history = model.fit([X[0][:-LVAL],X[1][:-LVAL]],Y[:-LVAL], epochs=EPOCHS, batch_size=BATCH, validation_data=([X[0][-LVAL:],X[1][-LVAL:]],Y[-LVAL:]))
 else:
+
+
     with open('processed_trace/Dataset0.pkl','rb') as f:
         D = pickle.load(f)
     X1, X20, Y = D['X1'],D['X2'],D['Y']
+    ONE_HOT_Y = np.zeros((len(Y),2))
+    for i in range(len(Y)):
+        ONE_HOT_Y[i,Y[i]] = 1
+    ONE_HOT_Y = ONE_HOT_Y.astype('float32')
     L = len(X1)
-    assert(len(X1)==len(X20)==len(Y))
-    X1 = np.asarray([X_ + [0] * (ML-len(X_)) for X_ in X1]).reshape(len(X1),-1,1)
-    X2 = np.asarray([([(i_,y_) for i_,y_ in enumerate(X_)] + [(0,0)] * (MI-len(X_)) ) for X_ in X20])
     LTR = int(L*(1-VAL))
     B = 10
     LTR = LTR//B * B # LTR is approximated to the closest multiple of B :-)
     LVA = L - LTR
     LVA = LVA // B * B # THe same for LVA
     BATCH = BATCH // B * B # And the same for Batch Size
-    print(f'X1\'s shape is: {X1.shape}, X2\'s shape is: {X2.shape}, Ltrain and Lval are {LTR},{LVA}. The batch size has been readjusted to {BATCH}')
+
+    assert(len(X1)==len(X20)==len(Y))
+
+    X1_TRACKER = []
+    for X_ in X1:
+        X1_TRACKER.append((ML-len(X_)))
+
+    X2 = [[] for _ in range(len(X20))]
+    X2_TRACKER = []
+    for i,X_ in enumerate(X20):
+        c = 0
+        for i_,y_ in enumerate(X_):
+            for z in y_:
+                X2[i] += [[float(i_),float(z)]]
+                c += 1
+        X2_TRACKER.append(MI-c) 
+
+
     def produce_data(A,B):
         w = list(range(A,B))
         np.random.shuffle(w)
         for i in w:
-            yield [X1[i-T+1:i+1,:,:],X2[i-T+1,:i+1,:]]
+                yield ([
+                        [ tf.convert_to_tensor(np.asarray([ (X1[j] + [0.] * X1_TRACKER[j]) for j in range(i-T+1,i+1)]).reshape(T,-1,1)), 
+                          tf.convert_to_tensor(np.asarray([ (X2[j] + [[0., 0.]] * X2_TRACKER[j]) for j in range(i-T+1,i+1)])),
+                        ], 
+                        tf.convert_to_tensor(ONE_HOT_Y[i:i+1,:].reshape(1,2)),
+                      ])
         yield None
 
+    # A mini print section for debugging :-) flagged to kill 
     trainD = produce_data(T,LTR)
-    valD = produce_data(LTR+T,L)
+    #valD = produce_data(LTR+T,L)
+    [x1,x2],y = trainD.__next__()
+    print(x1.shape, x2.shape, y.shape)
+    #	sys.exit(1)
 
-    print(Y)
+    #OT = ( (tf.TensorSpec(shape=(1, 8, 5712), dtype=tf.float32) , tf.TensorSpec(shape=(8, 5709, 2), dtype=tf.float32)), tf.TensorSpec(shape=(1,2), dtype=tf.float32))
+    A = tuple([ tuple([  (tf.float32,)              for i in range(5712)  ]) for _ in range(8)])
+    B = tuple([ tuple([  (tf.float32,tf.float32)    for i in range(5709)  ]) for _ in range(8)])
+    C = tuple(           (tf.float32, tf.float32)                                              )
+    OT = tuple([ tuple([A,B]), C])
+    print(f'Finished building the output structure')
+    #OT = ( ( (tf.float32,tf.float32,tf.float32), (tf.float32,tf.float32,tf.float32)) ,  (tf.float32, tf.float32))
+    trainD = tf.data.Dataset.from_generator(lambda: produce_data(T,LTR), output_types=OT)
+    print(f'Finished building the training dataset')
+    valD = tf.data.Dataset.from_generator(lambda: produce_data(LTR+T,L), output_types=OT)
+    print(f'Finished building the validation dataset')
+    print(f'About to train! :-)')
+    history = model.fit(trainD, epochs=1, batch_size=200, validation_data=valD, verbose=2)
+
     sys.exit(1)
     # Train
-    history = model.fit([X[0][:-LVAL],X[1][:-LVAL]],Y[:-LVAL], epochs=EPOCHS, batch_size=BATCH, validation_data=([X[0][-LVAL:],X[1][-LVAL:]],Y[-LVAL:]))
 
 # Display results
 print(history.history.keys())
@@ -134,7 +175,7 @@ ax[0].legend()
 ax[1].plot(history.history['auc'],label='auc')
 ax[1].plot(history.history['val_auc'], label='val auc')
 ax[1].set_ylim(0,1)
-ax[1].legend()
+ax[1].legend()																																																																																																																																																																				
 plt.show()
 
 

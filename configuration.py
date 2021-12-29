@@ -28,7 +28,7 @@ NDENSE3=8
 DROP3 = 0.4
 
 # Training parameters
-VAL=0.3
+VAL=0.25
 BATCH=10
 EPOCHS=3
 L=5 # a length used to generate random data just for testing
