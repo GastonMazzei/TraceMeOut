@@ -5,10 +5,16 @@ import pandas as pd
 from aux import update_config
 from parser import parse_wrapper, show
  
-def indexer_evolver(v,DT,L):
-	i = 0
-	j = 1
-	t0 = v[i]
+def indexer_evolver(v,DT,L, t0_start=False):
+	if t0_start == False:
+		i = 0
+		t0 = v[0]
+	else:
+		t0 = t0_start
+		## Look for the i so that v[i]-t0_start is minimum only if v[i]-t0 is positive
+		searchMe = np.where(v>=v0_start,v-t0_start,np.inf)
+		i = np.argmin(searchMe)
+	j = i + 1
 	tf  = t0
 	powers = [2**q for q in range(22)]
 	pMix = len(powers)-1
@@ -30,7 +36,7 @@ def indexer_evolver(v,DT,L):
 			else:
 				Nwithout -= 1
 		tf = v[j-1]
-		if  lapcounter%100==0: print(f'Processed {j} of {L}')
+		if  lapcounter%250==0: print(f'Processed {j} of {L}')
 		yield i,j,t0,tf
 		t0 += DT
 		i = j-1
@@ -90,7 +96,17 @@ if __name__ == '__main__':
 	df_categories = df.iloc[:,0].to_numpy()
 	NCATEGORIES = max(df.iloc[:,0])+1
 	update_config({'NCATEGORIES':NCATEGORIES})
-	def main(N,df):
+	def get_t0:
+		min_so_far = np.inf
+		for N in config.PROCS:
+			FILENAME_TIME = f'processed_trace/Processor{N}Times.txt'
+			with open(FILENAME_TIME, 'r') as f:
+				times = json.load(f)
+			times = np.asarray(times)
+			if min(times)<min_so_far:
+				min_so_far = min(times)
+		return min_so_far
+	def main(N,df, T0starter):
 		df_uptimes = df[f"TimeProc{N}"].to_numpy()
 		FILENAME = f'processed_trace/PostProcessed{N}Trace.txt'
 		FILENAME_TIME = f'processed_trace/Processor{N}Times.txt'
@@ -113,7 +129,7 @@ if __name__ == '__main__':
 		print(f'for Proc {N}: mean duration for each tree in microseconds (us) is {1e6 * np.mean(np.diff([times[c] for c in CHECKMARKS]))}, while DT (in us) is currently {config.dt}')
 
 		# Compute the portions that have to be considered
-		data_generator  = indexer_evolver(times, config.dt/1e6, len(times))
+		data_generator  = indexer_evolver(times, config.dt/1e6, len(times), T0starter)
 		answer, firstLap = True, True
 		FIRSTLINE, PREV_LASTLINE, LASTLINE, PREV_FIRSTLINE = 0,0,0,0
 		data  = []
@@ -166,9 +182,10 @@ if __name__ == '__main__':
 		with open(f'processed_trace/Dataset{N}.pkl','wb') as f:
 			pickle.dump({'X1':X1,'X2':X2,'Y':Y}, f)
 
+	global_t0 = get_t0()
 	# Wrapping the previous operations inside the function Main allows us to enjoy memory descoping :-) so the space is reduced ~ by 4
 	for N in config.PROCS: # Variable defined in the configuration file
-		main(N, df)
+		main(N, df, global_t0)
 
 
 
