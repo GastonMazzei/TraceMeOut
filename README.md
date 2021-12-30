@@ -9,9 +9,12 @@
 
 `sudo ./collect.sh`
 
-2️⃣To process the data, run
+2️⃣To process the data, run the following. 
 
 `./process.sh`
+
+<i>Profiling yields that +90% of the time is spent at `build_data` and `parser` in `pythonscripts/Processor3.py`, so an algorithm in C/FORTRAN to convert yamls to adjacency lists is a great way to contribute :-)</i>
+
 
 3️⃣ To train the neural net and check the results, run
 
@@ -40,6 +43,16 @@ For the simple case of the binary classification task of listening to music on Y
 
 
 <img src="https://github.com/GastonMazzei/TraceMeOut/raw/main/utils/latest_reported_performance.png" width=800>
+
+<b> Neural Network Architecture </b>
+
+
+<img src="https://github.com/GastonMazzei/TraceMeOut/raw/main/utils/neuralnet_architecture.png" width=800>
+
+
+<b>Tree Encoding</b>
+
+<img src="https://github.com/GastonMazzei/TraceMeOut/raw/main/utils/tree_encoding.png" width=800>
 
 <b>Requirements</b>
 

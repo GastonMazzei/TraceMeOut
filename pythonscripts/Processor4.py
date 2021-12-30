@@ -12,7 +12,9 @@ import configuration as config
 VERBOSE = [True,False][1]
 ML = 0
 MI = 0
-for P in config.PROCS:
+
+def firstFunction(P,MI):
+	global ML
 	with open(f'processed_trace/Dataset{P}.pkl','rb') as f:
 		data = pickle.load(f)
 	lens = [len(x) for x in data['X1']]
@@ -30,6 +32,12 @@ for P in config.PROCS:
 		MI = max([MI, lc])
 	with open(f'processed_trace/Dataset{P}.pkl','wb') as f:
 		pickle.dump(data,f)
+	return MI
+
+# The previous function allows better memory handling :-)
+for P in config.PROCS:
+	MI = firstFunction(P,MI)
+
 
 # Update the values of the configuration file :-)
 with open('configuration.py','r') as f:

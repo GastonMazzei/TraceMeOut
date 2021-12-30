@@ -1,8 +1,17 @@
 
 rm raw_data/trace
+rm *.info
 
 echo "function_graph" > /sys/kernel/debug/tracing/current_tracer
 echo "funcgraph-abstime" >> /sys/kernel/debug/tracing/trace_options
+
+# Compute the processor's time offset :-)
+PER_CPU_BASE=/sys/kernel/debug/tracing/per_cpu
+sudo ls $PER_CPU_BASE > temp
+while IFS= read -r line; do
+	sudo cat "$PER_CPU_BASE/$line/stats" > "$line.info" 
+done < temp
+
 
 
 # Collect data from user until explicit termination
@@ -21,6 +30,9 @@ echo "nop" > /sys/kernel/debug/tracing/current_tracer
 echo "nop" > /sys/kernel/debug/tracing/current_tracer
 echo "nop" > /sys/kernel/debug/tracing/current_tracer
 echo "nop" > /sys/kernel/debug/tracing/current_tracer
+
+# Erase processor's info 
+rm *.info
 
 # End
 echo "End of the script! :-)"

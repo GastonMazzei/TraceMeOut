@@ -1,10 +1,10 @@
 
 # Model-specific parameters
 T=8 # duration of the window in dt units
-dt = 100000 # time in microseconds
+dt = 4000 # time in microseconds
 UNIQUES=3807  #number of unique ids
-MI=5709  #max number of interactions
-ML=5712  #max number of leaves
+MI=4762  #max number of interactions
+ML=4765  #max number of leaves
 NCATEGORIES=2
 
 # Architectural parameters
@@ -23,15 +23,25 @@ stride = (1,1)
 NDENSE2 = 16
 DROP2 = 0.75
 
+
+ACT4='relu'
+NDENSE4=8
+DROP4 = 0.2
+
+
 ACT3='relu'
 NDENSE3=8
 DROP3 = 0.4
 
+
 # Training parameters
 VAL=0.25
 BATCH=10
-EPOCHS=3
+EPOCHS=50
 L=5 # a length used to generate random data just for testing
+LR=0.05
+
+
 
 # Extras
 POOLING = False

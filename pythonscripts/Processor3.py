@@ -10,12 +10,27 @@ def indexer_evolver(v,DT,L):
 	j = 1
 	t0 = v[i]
 	tf  = t0
+	powers = [2**q for q in range(22)]
+	pMix = len(powers)-1
+	lapcounter = 0
 	while j<L:
+		lapcounter += 1
+		Nwithout = 0
+		# Strategy for exploring exponentially what is the range of the 'latest tree'
 		while v[j]-t0<DT:
-			j+=1
-			if j>=L: break
+			newj = j + powers[Nwithout]
+			if newj<L:
+				if v[newj]-t0<DT:
+					Nwithout += 1
+					j = newj
+					continue
+			if Nwithout == 0:
+				j = newj
+				break
+			else:
+				Nwithout -= 1
 		tf = v[j-1]
-		if  j%20==0: print(f'Processed {j} of {L}')
+		if  lapcounter%100==0: print(f'Processed {j} of {L}')
 		yield i,j,t0,tf
 		t0 += DT
 		i = j-1
@@ -62,21 +77,28 @@ if __name__ == '__main__':
 	with open('helpers/unique_elems.pkl','rb') as f:
 		G = pickle.load(f)
 	def tagger(nm):
+		try:
+			return G[nm]
+		except:
+			if nm not in G.keys():
+				G['!__COUNTER__!'] += 1
+				G[nm] = G['!__COUNTER__!']
 		return G[nm]
+
 	VERBOSE = [True, False][1]
 	df = pd.read_csv('helpers/categories.csv')
-	df_uptimes = df.iloc[:,1].to_numpy()
 	df_categories = df.iloc[:,0].to_numpy()
 	NCATEGORIES = max(df.iloc[:,0])+1
 	update_config({'NCATEGORIES':NCATEGORIES})
-	for N in config.PROCS: # Variable defined in the configuration file
+	def main(N,df):
+		df_uptimes = df[f"TimeProc{N}"].to_numpy()
 		FILENAME = f'processed_trace/PostProcessed{N}Trace.txt'
 		FILENAME_TIME = f'processed_trace/Processor{N}Times.txt'
 		
 		# Open time
 		with open(FILENAME_TIME, 'r') as f:
 			times = json.load(f)
-		times = np.asarray(times) * 1e6
+		times = np.asarray(times)
 		if VERBOSE: print(f'median wait between calls and std are: {round(np.mean(np.diff(times)),3)}us {round(np.std(np.diff(times)),2)}us')
 		
 
@@ -88,9 +110,10 @@ if __name__ == '__main__':
 			if x[0]=='-':
 				CHECKMARKS.append(i)
 		CHECKMARKS = np.asarray(CHECKMARKS)
+		print(f'for Proc {N}: mean duration for each tree in microseconds (us) is {1e6 * np.mean(np.diff([times[c] for c in CHECKMARKS]))}, while DT (in us) is currently {config.dt}')
 
 		# Compute the portions that have to be considered
-		data_generator  = indexer_evolver(times, config.dt, len(times))
+		data_generator  = indexer_evolver(times, config.dt/1e6, len(times))
 		answer, firstLap = True, True
 		FIRSTLINE, PREV_LASTLINE, LASTLINE, PREV_FIRSTLINE = 0,0,0,0
 		data  = []
@@ -106,6 +129,7 @@ if __name__ == '__main__':
 			if df_categories[closer_nonnegative(df_uptimes, tf_)]==-1:
 				# Skip this lap as it has no target to classify, i.e. it is data from the beggining
 				# when users werent yet able to mark which tag belonged to their then current activity
+				#print('continuing',tf_);import time; time.sleep(0.01)
 				continue
 			if VERBOSE: print(f't0,tf = {t0_} {tf_}')
 			if VERBOSE: time.sleep(2)
@@ -127,7 +151,7 @@ if __name__ == '__main__':
 			if VERBOSE: print([dx[0] for dx in data])
 			
 
-                        # Build Y: we use the category closer to the end, i.e. tf_ 
+		        # Build Y: we use the category closer to the end, i.e. tf_ 
 			Y.append(df_categories[closer_nonnegative(df_uptimes, tf_)])
 			if VERBOSE: print(f'Latest category is: {Y[-1]}, prev_firstline={PREV_FIRSTLINE}, firstline={FIRSTLINE}, last&prevlast={LASTLINE},{PREV_LASTLINE}')
 			# Build X1 and X2: we must build a graph using data[-1] to data[..-N] until the first item is True (included)
@@ -138,14 +162,13 @@ if __name__ == '__main__':
 			X2 += [cons.copy()]
 			cter += 1
 
-
 			# Save!
 		with open(f'processed_trace/Dataset{N}.pkl','wb') as f:
 			pickle.dump({'X1':X1,'X2':X2,'Y':Y}, f)
 
-
-
-
+	# Wrapping the previous operations inside the function Main allows us to enjoy memory descoping :-) so the space is reduced ~ by 4
+	for N in config.PROCS: # Variable defined in the configuration file
+		main(N, df)
 
 
 
