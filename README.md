@@ -34,7 +34,7 @@ The sampling and neural network model are as follows: in particular it requires 
 
 <img src="https://github.com/GastonMazzei/TraceMeOut/raw/main/utils/neuralnet_model.png" width=800>
 
-<b>Results</b> (🚧<i>Under construction!</i>🚧)
+<b>Results</b> 🔨👷<i>Next task: improve the net's performance</i>
 
 For the simple case of the binary classification task of listening to music on YouTube Vs having the video paused (the database for the 4 CPU cores is currently part of this repo in `processed_trace`. 20-30 secs. of trace data sampled at 100 microseconds led to the ~5Mb databases), the results so far are the following ones 😃 The neural net's architecture can be very easily further tuned using the GoogleColab Jupyter Notebook, more info above.
 
