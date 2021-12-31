@@ -5,7 +5,7 @@
 
 <b>How to run</b>
 
-1️⃣ To start collecting data, run the following (Coming soon 🔜 Video tutorial on how to collect data, but it's pretty straightforward 😉)
+1️⃣ To start collecting data, run the following
 
 `sudo ./collect.sh`
 
@@ -20,7 +20,7 @@
 
 `./trainAI.sh`
 
-But it's quite more comfortable to take advantage of GoogleColab's GPU by using 
+But it's quite more comfortable to take advantage of GoogleColab's GPU by using the following notebook. In fact, it carries the latest version of network architecture.
 
 `./utils/TraceMeOut_4GoogleColab.ipynb`
 
@@ -37,20 +37,24 @@ The sampling and neural network model are as follows: in particular it requires 
 
 <img src="https://github.com/GastonMazzei/TraceMeOut/raw/main/utils/neuralnet_model.png" width=800>
 
-<b>Results</b> 🔨👷<i>Next task: improve the net's performance</i>
+<b>Results</b>
 
-What follows are results for the simple case of the binary classification task defined by listening to music on YouTube Vs having the video paused. The database for that is composed by the trace of 4 CPU cores, currently part of the repo in the directory `processed_trace`. There are 20-30 secs. of trace data sampled at 100 microseconds, which have led to ~5Mb databases per core. If using Google Colab, which is recommended as it carries the "latest" version, the data is automatically curled as part of the code. The latest results so far are the following ones 😃
+The following are results for the simple case of a binary classification task defined by listening to music on YouTube Vs having the video paused. The database for that is composed by the trace of 4 CPU cores, currently part of the repo in the directory `processed_trace`. There are 20-30 secs. of trace data sampled at 100 microseconds, which have led to ~5Mb databases per core. If using Google Colab, which is recommended as it carries the "latest" version, the data is automatically curled as part of the code, and about 4Gb of Tensorflow's TFRecord dataset files are produced.
 
+The conclusion for this case is that in fact the network was able to produce at least some learning, noted by the upward trend in accuracy over epochs and the relatively small overfitting as defined by the training and validation gap.
 
 <img src="https://github.com/GastonMazzei/TraceMeOut/raw/main/utils/latest_reported_performance.png" width=800>
 
 <b> Neural Network Architecture </b>
 
+The following diagram shows the chosen neural network achitecture for the case of a 4-processor machine, which corresponds to the one where the data included in this repo was collected.
 
 <img src="https://github.com/GastonMazzei/TraceMeOut/raw/main/utils/neuralnet_architecture.png" width=800>
 
 
 <b>Tree Encoding</b>
+
+Ftrace's function_graph defines a graph. The following diagram shows how it is encoded into integer-valued tensors, which in turn are later 'normalized' to their respective `[0,1]`  as part of the neural net's preprocessing. 
 
 <img src="https://github.com/GastonMazzei/TraceMeOut/raw/main/utils/tree_encoding.png" width=800>
 
