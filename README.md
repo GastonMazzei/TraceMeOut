@@ -39,7 +39,7 @@ The sampling and neural network model are as follows: in particular it requires 
 
 <b>Results</b> 🔨👷<i>Next task: improve the net's performance</i>
 
-For the simple case of the binary classification task of listening to music on YouTube Vs having the video paused (the database for the 4 CPU cores is currently part of this repo in `processed_trace`. 20-30 secs. of trace data sampled at 100 microseconds led to the ~5Mb databases), the results so far are the following ones 😃 The neural net's architecture can be very easily further tuned using the GoogleColab Jupyter Notebook, more info above.
+What follows are results for the simple case of the binary classification task defined by listening to music on YouTube Vs having the video paused. The database for that is composed by the trace of 4 CPU cores, currently part of the repo in the directory `processed_trace`. There are 20-30 secs. of trace data sampled at 100 microseconds, which have led to ~5Mb databases per core. If using Google Colab, which is recommended as it carries the "latest" version, the data is automatically curled as part of the code. The latest results so far are the following ones 😃
 
 
 <img src="https://github.com/GastonMazzei/TraceMeOut/raw/main/utils/latest_reported_performance.png" width=800>
