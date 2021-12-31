@@ -27,7 +27,7 @@ But it's quite more comfortable to take advantage of GoogleColab's GPU by using
 
 <b>Configuration</b>
 
-The file called `configuration.py` allows the modification of the neural net's training and architecture hyperparameters. It also allows to change the size of the sliding window and sampling ratio. For more info, see "Model".
+The file called `configuration.py` allows the modification of the neural net's training and architecture hyperparameters. It also allows to change the size of the sliding window and sampling ratio. The equivalent of the `configuration.py` file if training in Colab is a Jupyter Netbook cell. For more info about what each parameter means, see "Model".
 
 <b>Model</b>
 
